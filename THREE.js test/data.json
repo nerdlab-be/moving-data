@@ -1,0 +1,19 @@
+{
+	"collection": [
+		{
+			"photoURL": "./dummydata/img/00.jpg",
+			"coords": [ 0.0, 0.0, 0.0 ],
+			"time": 0.0
+		},
+		{
+			"photoURL": "./dummydata/img/01.jpg",
+			"coords": [ 0.0, 1.0, 0.0 ],
+			"time": 3.0
+		},
+		{
+			"photoURL": "./dummydata/img/02.jpg",
+			"coords": [ 0.0, 1.5, 1.0 ],
+			"time": 6.0
+		}
+	]
+}
