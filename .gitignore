@@ -3,3 +3,7 @@ client_secret.json
 credentials.json
 privatekey.json
 input-images
+
+# IntelliJ IDEA
+*.iml
+.idea
