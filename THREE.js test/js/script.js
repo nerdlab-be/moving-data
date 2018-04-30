@@ -16,7 +16,7 @@ function loadData()
 				init();
 			}
 	};
-	xhttp.open("GET", "data.json", true);
+	xhttp.open("GET", "cats.json", true);
 	xhttp.send();
 }
 
@@ -41,12 +41,12 @@ function init(){
 	for (var i = 0; i < data.collection.length ;i++){	
 		var item = data.collection[i];
 		var material = new THREE.MeshBasicMaterial({
-				map: loader.load(item.photoURL),	
+				map: loader.load(item.url),	
 				side: THREE.DoubleSide 
 			});
 		var plane = new THREE.Mesh( geometry, material);
-		var coord = item.coords;
-		plane.position.set(coord[0], coord[2], coord[1] );
+		// var coord = item.coords;
+		plane.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 100 );
 		scene.add( plane );
 	}
 	
