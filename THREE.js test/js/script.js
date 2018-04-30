@@ -35,7 +35,7 @@ function init(){
 	var geometry = new THREE.PlaneBufferGeometry( 1 , 0.75);
 	
 	const loader = new THREE.TextureLoader();
-	loader.setCrossOrigin("");
+	loader.setCrossOrigin("use-credentials");
 
 
 	for (var i = 0; i < data.collection.length ;i++){	
