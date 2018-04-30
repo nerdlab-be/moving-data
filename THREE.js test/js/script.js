@@ -41,7 +41,7 @@ function init(){
 	for (var i = 0; i < data.collection.length ;i++){	
 		var item = data.collection[i];
 		var material = new THREE.MeshBasicMaterial({
-				map: loader.load(item.url),	
+				map: loader.load("https://picsum.photos/200/300/?random"),	
 				side: THREE.DoubleSide 
 			});
 		var plane = new THREE.Mesh( geometry, material);
