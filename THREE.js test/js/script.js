@@ -46,7 +46,7 @@ function init(){
 			});
 		var plane = new THREE.Mesh( geometry, material);
 		// var coord = item.coords;
-		plane.position.set(Math.random() * 100, Math.random() * 100, Math.random() * 100 );
+		plane.position.set(Math.random() * 100 - 50, Math.random() * 100 - 50, Math.random() * 10 - 20 );
 		scene.add( plane );
 	}
 	
