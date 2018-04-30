@@ -34,11 +34,16 @@ function init(){
 	
 	var geometry = new THREE.PlaneBufferGeometry( 1 , 0.75);
 	
-	THREE.ImageUtils.crossOrigin = '';
+	const loader=new THREE.TextureLoader();
+	loader.setCrossOrigin("anonymous");
+
 
 	for (var i = 0; i < data.collection.length ;i++){	
 		var item = data.collection[i];
-		var material = new THREE.MeshBasicMaterial({	map: new THREE.TextureLoader().load(item.photoURL),	side: THREE.DoubleSide });
+		var material = new THREE.MeshBasicMaterial({
+				map: loader.load(item.photoURL),	
+				side: THREE.DoubleSide 
+			});
 		var plane = new THREE.Mesh( geometry, material);
 		var coord = item.coords;
 		plane.position.set(coord[0], coord[2], coord[1] );
