@@ -34,6 +34,8 @@ function init(){
 	
 	var geometry = new THREE.PlaneBufferGeometry( 1 , 0.75);
 	
+	THREE.ImageUtils.crossOrigin = '';
+
 	for (var i = 0; i < data.collection.length ;i++){	
 		var item = data.collection[i];
 		var material = new THREE.MeshBasicMaterial({	map: new THREE.TextureLoader().load(item.photoURL),	side: THREE.DoubleSide });
