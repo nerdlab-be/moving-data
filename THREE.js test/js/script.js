@@ -3,8 +3,8 @@ var root;
 var data;
 // var controls;
 var currentFrame = 0;
-var targetFrame = 0;
-var camSpeed = 1;
+var frame0Pos;
+var picScale = 3.0;
 
 window.onload = function() {
 	loadData();
@@ -30,8 +30,8 @@ function init(){
 	
 	root = new THREE.Object3D();
 	scene.add( root );
-	
-	var geometry = new THREE.PlaneBufferGeometry( 1 , 0.75);
+
+	var geometry = new THREE.PlaneBufferGeometry( 1 * picScale , 0.75 * picScale);
 	
 	var loader = new THREE.TextureLoader();
 	loader.setCrossOrigin("*");
@@ -41,16 +41,19 @@ function init(){
 
 	for (var i = 0; i < data.collection.length ;i++){	
 		var item = data.collection[i];
-		item.photoURL = "https://picsum.photos/200/300/?random";
+		item.photoURL = "https://picsum.photos/200/300/?random&rnd=" + Math.random();
 		item.coords = [
 			(Math.sin(Math.sin(t)) * Math.cos(t * .001)) * 50,
 			Math.sin(t * .5) * Math.cos(t * .01) * 5,
 			Math.cos(t * .1) * (Math.sin(t * .33) * .5 + .5) * 50
 		];
+		var texture = loader.load(item.photoURL);
+		texture.minFilter = THREE.LinearFilter;	// cannot use mipmapping on non-POT textures
 		var material = new THREE.MeshBasicMaterial({
-				map: loader.load(item.photoURL),
+				map: texture,
 				side: THREE.DoubleSide
 			});
+
 		var plane = new THREE.Mesh( geometry, material);
 		var coord = item.coords;
 		plane.position.set(coord[0], coord[1], coord[2]);
@@ -71,11 +74,12 @@ function init(){
 			var offset = new THREE.Vector3(0, 0, 1);
 			offset.applyMatrix4(camera.matrixWorld);
 			camera.position.addVectors(prev.position, offset);
+			frame0Pos = camera.position;
 		}
 
 		prev = plane;
 
-		t += .1;
+		t += .3;
 	}
 
 
@@ -109,11 +113,40 @@ function onResize()
 
 //game logic
 function update() {
-	var i1 = Math.floor(currentFrame);
-	var i2 = (i1 + 1) % data.collection.length;
+	currentFrame += .02;
 
+	var t = Math.min(currentFrame, data.collection.length - 0.001);
+	var i1 = Math.floor(t);
+	var i0 = i1 - 1;
+	var i2 = i1 + 1;
+
+	// this is the lookat target
+	// the camera itself will follow behind 1 frame
 	var frameA = data.collection[i1];
 	var frameB = data.collection[i2];
+	var fr = currentFrame - i1;
+	var pos0;
+
+	if (i0 < 0) {
+		pos0 = frame0Pos;
+	}
+	else {
+		var frame0 = data.collection[i0];
+		pos0 = new THREE.Vector3(frame0.coords[0], frame0.coords[1], frame0.coords[2]);
+	}
+
+
+	var posA = new THREE.Vector3(frameA.coords[0], frameA.coords[1], frameA.coords[2]);
+	var posB = new THREE.Vector3(frameB.coords[0], frameB.coords[1], frameB.coords[2]);
+
+	// put camera between pos0 and posA (so 1 frame behind lookat)
+	pos0.lerp(posA, fr);
+	// put the look-at camera between posA and posB
+	posA.lerp(posB, fr);
+
+	camera.position.copy(pos0);
+	camera.position.y += .5 * picScale;
+	camera.lookAt(posA);
 }
 
 //draw scene
