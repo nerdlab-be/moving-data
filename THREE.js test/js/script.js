@@ -1,7 +1,10 @@
 var camera, scene, renderer;
 var root;
 var data;
-var controls;
+// var controls;
+var currentFrame = 0;
+var targetFrame = 0;
+var camSpeed = 1;
 
 window.onload = function() {
 	loadData();
@@ -23,10 +26,6 @@ function loadData()
 function init(){
 	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 	
-	camera.position.z = 3;
-	camera.position.x = 0;
-	
-	
 	scene = new THREE.Scene();
 	
 	root = new THREE.Object3D();
@@ -34,23 +33,52 @@ function init(){
 	
 	var geometry = new THREE.PlaneBufferGeometry( 1 , 0.75);
 	
-	const loader = new THREE.TextureLoader();
-	loader.setCrossOrigin("");
+	var loader = new THREE.TextureLoader();
+	loader.setCrossOrigin("*");
 
+	var t = 0.0;
+	var prev = null;
 
 	for (var i = 0; i < data.collection.length ;i++){	
 		var item = data.collection[i];
+		item.photoURL = "https://picsum.photos/200/300/?random";
+		item.coords = [
+			(Math.sin(Math.sin(t)) * Math.cos(t * .001)) * 50,
+			Math.sin(t * .5) * Math.cos(t * .01) * 5,
+			Math.cos(t * .1) * (Math.sin(t * .33) * .5 + .5) * 50
+		];
 		var material = new THREE.MeshBasicMaterial({
-				map: loader.load("https://picsum.photos/200/300/?random"),	
-				side: THREE.DoubleSide 
+				map: loader.load(item.photoURL),
+				side: THREE.DoubleSide
 			});
 		var plane = new THREE.Mesh( geometry, material);
-		// var coord = item.coords;
-		plane.position.set(Math.random() * 100 - 50, Math.random() * 100 - 50, Math.random() * 10 - 20 );
+		var coord = item.coords;
+		plane.position.set(coord[0], coord[1], coord[2]);
 		scene.add( plane );
+
+		if (i >= 1)
+			plane.lookAt(prev.position);
+		if (i === 1) {
+			// still need to orient the first pic and the camera looking at it
+
+			// orient first plane in the same way as the second
+			prev.quaternion.copy(plane.quaternion);
+			// orient camera in the same way as the first plane, so it looks head-on
+			camera.quaternion.copy(plane.quaternion);
+			camera.updateMatrixWorld();
+
+			// "1m behind", according to the camera orientation
+			var offset = new THREE.Vector3(0, 0, 1);
+			offset.applyMatrix4(camera.matrixWorld);
+			camera.position.addVectors(prev.position, offset);
+		}
+
+		prev = plane;
+
+		t += .1;
 	}
-	
-	
+
+
 	//
 	
 	renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true});
@@ -60,9 +88,9 @@ function init(){
 	
 	//
 
-	controls = new THREE.OrbitControls(camera, renderer.domElement)
-	controls.rotateSpeed = 0.5;
-	
+	// controls = new THREE.OrbitControls(camera, renderer.domElement)
+	// controls.rotateSpeed = 0.5;
+
 	window.addEventListener('resize', onResize);
 	onResize();
 	gameloop();
@@ -81,13 +109,17 @@ function onResize()
 
 //game logic
 function update() {
-	
-};
+	var i1 = Math.floor(currentFrame);
+	var i2 = (i1 + 1) % data.collection.length;
+
+	var frameA = data.collection[i1];
+	var frameB = data.collection[i2];
+}
 
 //draw scene
 function render() {
 	renderer.render(scene, camera);	
-};
+}
 
 
 //run gameloop (update, render, repeat)
@@ -95,4 +127,4 @@ function gameloop() {
 	requestAnimationFrame(gameloop);
 	update();
 	render();
-};
+}
