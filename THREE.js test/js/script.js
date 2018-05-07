@@ -2,6 +2,9 @@ var camera, scene, renderer;
 var root;
 var data;
 // var controls;
+
+// Just animate currentFrame values to animate the camera:
+// For example: tweening from 2 to 3 moves the camera between those two pictures
 var currentFrame = 0;
 var frame0Pos;
 var picScale = 3.0;
@@ -19,6 +22,8 @@ function loadData()
 				init();
 			}
 	};
+
+	// TODO: Replace back with something formatted like data.json
 	xhttp.open("GET", "cats.json", true);
 	xhttp.send();
 }
