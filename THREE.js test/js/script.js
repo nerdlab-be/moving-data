@@ -19,6 +19,8 @@ function loadData()
 				init();
 			}
 	};
+
+	// TODO: Replace back with something formatted like data.json
 	xhttp.open("GET", "cats.json", true);
 	xhttp.send();
 }
