@@ -1,22 +1,26 @@
 const { getImageData } = require('./processing');
-const GeoJSON = require('geojson');
 const { promisify } = require('util');
 const fs = require('fs');
 
-listFiles = promisify(fs.readdir);
+const listFiles = promisify(fs.readdir);
+const write = promisify(fs.writeFile);
 
-const process = async () => {
+const toClientFormat = ({ path, time, lat, lng, alt }) => ({
+  photoURL: path,
+  time: time,
+  coords: [lng, lat, alt],
+});
+
+const processImages = async directory => {
   try {
-    const allFiles = await listFiles('input-images');
+    const allFiles = await listFiles(directory);
     const images = allFiles.filter(path => path.endsWith('.jpg'));
-    const promises = images.map(path => getImageData({ image: `input-images/${path}` }));
+    const promises = images.map(path => getImageData({ image: `${directory}/${path}` }));
     const data = await Promise.all(promises);
-    const geojson = GeoJSON.parse(data, { Point: ['lat', 'lng'] });
-    console.log(JSON.stringify(geojson));
-    
+    await write(`${directory}/data.json`, JSON.stringify(data.map(toClientFormat)));
   } catch(e) {
     console.error(e);
   }
 };
 
-process();
+processImages(process.argv[2]);
