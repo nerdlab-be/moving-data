@@ -10,10 +10,11 @@ var frame0Pos;
 var picScale = 3.0;
 
 window.onload = function() {
-	loadData();
+	var dataFile = window.location.search ? window.location.search.slice(1) : 'cats.json';
+	loadData(dataFile);
 }
 
-function loadData()
+function loadData(dataFile)
 {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function() {
@@ -24,7 +25,7 @@ function loadData()
 	};
 
 	// TODO: Replace back with something formatted like data.json
-	xhttp.open("GET", "cats.json", true);
+	xhttp.open("GET", dataFile, true);
 	xhttp.send();
 }
 
@@ -46,8 +47,8 @@ function init(){
 
 	for (var i = 0; i < data.collection.length ;i++){	
 		var item = data.collection[i];
-		item.photoURL = "https://picsum.photos/200/300/?random&rnd=" + Math.random();
-		item.coords = [
+		item.photoURL = item.photoURL ||  "https://picsum.photos/200/300/?random&rnd=" + Math.random();
+		item.coords = item.coords || [
 			(Math.sin(Math.sin(t)) * Math.cos(t * .001)) * 50,
 			Math.sin(t * .5) * Math.cos(t * .01) * 5,
 			Math.cos(t * .1) * (Math.sin(t * .33) * .5 + .5) * 50
@@ -86,6 +87,7 @@ function init(){
 
 		t += .3;
 	}
+	window.LOLCATS = data;
 
 
 	//

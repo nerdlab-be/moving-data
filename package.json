@@ -22,6 +22,7 @@
     "exif": "^0.6.0",
     "express": "^4.16.3",
     "geojson": "^0.5.0",
-    "googleapis": "^27.0.0"
+    "googleapis": "^27.0.0",
+    "proj4js": "file:node_modules/proj4js"
   }
 }
